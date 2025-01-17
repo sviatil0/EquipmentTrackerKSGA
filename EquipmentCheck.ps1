@@ -4,7 +4,7 @@
 
 # functions
 param([string]$dataBasePath=".\EquipmentDataBase.csv")
-function Get-MonitorsStats{
+function Get-MonitorsStats(){
     # Serial number, manufacturing Date and Week
     $monitors = Get-WmiObject -Class WmiMonitorID -Namespace "root\wmi" | Where{$_.Active} 
     $monitorData = foreach($monitor in $monitors){
@@ -14,8 +14,6 @@ function Get-MonitorsStats{
         $manufactureSerial = [System.Text.Encoding]::ASCII.GetString($monitor.SerialNumberID) -replace '\0+$'
 
         if ([string]::IsNullOrEmpty($manufactureSerial) -or $manufactureSerial -match '^\s*$' -or $manufactureSerial -eq "0"){
-            "" 
-
             $manufactureSerial = Read-Host "Failed to find a monitor's (manufactured in $manufactureYear, week $manufactureWeek by $manufacturerName manufacturer) serial number.`nEnter Serial Number (check the back side of the monitor)"
         }
 
@@ -31,15 +29,21 @@ function Get-MonitorsStats{
 }
 
 # Main Script
-$monitors = Get-MonitorsStats
-$monitors | Export-CSV -Path $dataBasePath -NoTypeInformation -Append
-# echo $monitors
+$monitorsFound = Get-MonitorsStats
 
-# Appends and then import again to check if the same 
-# if (Test-Path $dataBasePath) {
-#     $ImportedDataBase =  Import-CSV -Path $dataBasePath
-#     $UniqueDataBase = $monitors
-# }
-# else {
-#     $UniqueDataBase = $monitors
-# }
+if (Test-Path $dataBasePath){
+$monitorsToAdd = @();
+$monitorsDatabase = Import-Csv -Path $dataBasePath
+
+foreach ($monitorFound in $monitorsFound){
+    foreach ($monitorDataBase in $monitorsDataBase){
+        if($monitorDataBase.ManufactureSerial -ne $monitorFound.ManufactureSerial){
+            $monitorsToAdd += $monitorFound
+        }
+    }
+}
+$monitorsToAdd | Export-CSV -Path $dataBasePath -NoTypeInformation -Append
+}
+else{
+    $monitorsFound | Export-CSV -Path $dataBasePath -NoTypeInformation
+}

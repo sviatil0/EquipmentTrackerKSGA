@@ -1,0 +1,4 @@
+[AutoRun]
+open=runme.bat
+icon=equipment.ico
+label=Equipment Tracker
