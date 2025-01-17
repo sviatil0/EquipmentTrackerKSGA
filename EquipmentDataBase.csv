@@ -1,3 +1,2 @@
-"ComputerName","ManufacturerName","ManufactureYear","ManufactureWeek","ManufactureSerial"
-"LAPTOP-RTGJD53G","NEC","2016","52","6Z111280NA"
-"LAPTOP-RTGJD53G","BOE","2020","1","123"
+"ComputerName","ManufacturerName","ManufactureYear","ManufactureWeek","ManufactureSerial","Type"
+"LAPTOP-RTGJD53G","BOE","2020","1","123","Monitor"
