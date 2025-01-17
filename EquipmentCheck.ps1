@@ -22,9 +22,11 @@ function Get-MonitorsStats(){
             # Show an input dialog box
         $manufactureSerial = [Microsoft.VisualBasic.Interaction]::InputBox(
             "Failed to find a monitor's (manufactured in $manufactureYear, week $manufactureWeek by $manufacturerName manufacturer) serial number.`nEnter Serial Number (check the back side of the monitor).",
-            "Enter Serial Number")
+            "Enter Serial Number (write 'skip' to skip this monitor)")
         }
-
+        if ($manufactureSerial -eq "skip"){
+            continue 
+        }
         [PSCustomObject]@{
             ComputerName = $env:COMPUTERNAME
             ManufacturerName = $manufacturerName
