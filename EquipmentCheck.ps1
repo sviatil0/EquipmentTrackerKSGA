@@ -1,5 +1,4 @@
 # Author: Sviatoslav Oleksiienko
-# Date: 01/13/2025
 # 
 #Parameters
 param([string]$dataBasePath=".\EquipmentDataBase.csv")
@@ -18,7 +17,6 @@ function Get-MonitorsStats(){
         $manufactureSerial = [System.Text.Encoding]::ASCII.GetString($monitor.SerialNumberID) -replace '\0+$'
 
         if ([string]::IsNullOrEmpty($manufactureSerial) -or $manufactureSerial -match '^\s*$' -or $manufactureSerial -eq "0"){
-            # $manufactureSerial = Read-Host "Failed to find a monitor's (manufactured in $manufactureYear, week $manufactureWeek by $manufacturerName manufacturer) serial number.`nEnter Serial Number (check the back side of the monitor)"
             # Show an input dialog box
         $manufactureSerial = [Microsoft.VisualBasic.Interaction]::InputBox(
             "Failed to find a monitor's (manufactured in $manufactureYear, week $manufactureWeek by $manufacturerName manufacturer) serial number.`nEnter Serial Number (check the back side of the monitor).",
@@ -38,7 +36,11 @@ function Get-MonitorsStats(){
     }
     return $monitorData
 }
-
+function Get-HubsStats(){
+# TODO
+# https://learn.microsoft.com/en-us/powershell/module/pnpdevice/get-pnpdevice?view=windowsserver2025-ps
+# seems that Generic USB Hub is what hubs should be called
+}
 # Main Script
 $monitorsFound = Get-MonitorsStats
 
