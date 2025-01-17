@@ -33,6 +33,7 @@ function Get-MonitorsStats(){
             ManufactureYear = $manufactureYear
             ManufactureWeek = $manufactureWeek
             ManufactureSerial = $manufactureSerial
+            Type = Monitor
         } 
     }
     return $monitorData
