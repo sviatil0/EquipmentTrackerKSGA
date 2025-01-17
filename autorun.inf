@@ -1,4 +1,4 @@
 [AutoRun]
-open=runme.bat
+open=EquipmentCheck.exe
 icon=equipment.ico
 label=Equipment Tracker

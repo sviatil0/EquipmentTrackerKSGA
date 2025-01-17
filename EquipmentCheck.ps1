@@ -1,9 +1,13 @@
 # Author: Sviatoslav Oleksiienko
 # Date: 01/13/2025
 # 
+#Parameters
+param([string]$dataBasePath=".\EquipmentDataBase.csv")
+
+#Import
+Add-Type -AssemblyName Microsoft.VisualBasic
 
 # functions
-param([string]$dataBasePath=".\EquipmentDataBase.csv")
 function Get-MonitorsStats(){
     # Serial number, manufacturing Date and Week
     $monitors = Get-WmiObject -Class WmiMonitorID -Namespace "root\wmi" | Where{$_.Active} 
@@ -14,7 +18,11 @@ function Get-MonitorsStats(){
         $manufactureSerial = [System.Text.Encoding]::ASCII.GetString($monitor.SerialNumberID) -replace '\0+$'
 
         if ([string]::IsNullOrEmpty($manufactureSerial) -or $manufactureSerial -match '^\s*$' -or $manufactureSerial -eq "0"){
-            $manufactureSerial = Read-Host "Failed to find a monitor's (manufactured in $manufactureYear, week $manufactureWeek by $manufacturerName manufacturer) serial number.`nEnter Serial Number (check the back side of the monitor)"
+            # $manufactureSerial = Read-Host "Failed to find a monitor's (manufactured in $manufactureYear, week $manufactureWeek by $manufacturerName manufacturer) serial number.`nEnter Serial Number (check the back side of the monitor)"
+            # Show an input dialog box
+        $manufactureSerial = [Microsoft.VisualBasic.Interaction]::InputBox(
+            "Failed to find a monitor's (manufactured in $manufactureYear, week $manufactureWeek by $manufacturerName manufacturer) serial number.`nEnter Serial Number (check the back side of the monitor).",
+            "Enter Serial Number")
         }
 
         [PSCustomObject]@{
@@ -33,13 +41,14 @@ $monitorsFound = Get-MonitorsStats
 
 if (Test-Path $dataBasePath){
 $monitorsToAdd = @();
-$monitorsDatabase = Import-Csv -Path $dataBasePath
+$monitorsDataBase = Import-Csv -Path $dataBasePath
+$dataBaseSerials = $monitorsDataBase.ManufactureSerial
+# echo $monitorsDataBase
+
 
 foreach ($monitorFound in $monitorsFound){
-    foreach ($monitorDataBase in $monitorsDataBase){
-        if($monitorDataBase.ManufactureSerial -ne $monitorFound.ManufactureSerial){
-            $monitorsToAdd += $monitorFound
-        }
+    if($monitorFound.ManufactureSerial -notin $dataBaseSerials){
+        $monitorsToAdd += $monitorFound
     }
 }
 $monitorsToAdd | Export-CSV -Path $dataBasePath -NoTypeInformation -Append
