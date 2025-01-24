@@ -5,7 +5,7 @@ param([string]$dataBasePath=".\EquipmentDataBase.csv")
 
 #Import
 Add-Type -AssemblyName Microsoft.VisualBasic
-
+Add-Type -AssemblyName System.windows.Forms
 # functions
 function Get-MonitorsStats(){
     # Serial number, manufacturing Date and Week
@@ -37,9 +37,22 @@ function Get-MonitorsStats(){
     return $monitorData
 }
 function Get-HubsStats(){
-# TODO
+<#
+Pseudocode
+Show box saying please unplug the usb hub (or do not plug)
+Show box saying please plug in the usb hub
+Compare two datasets and find the difference and put the distinctivei info into array
+Identify Serial number and Manufascturer from the data
+Return the object that contains such info
+#> 
 # https://learn.microsoft.com/en-us/powershell/module/pnpdevice/get-pnpdevice?view=windowsserver2025-ps
 # seems that Generic USB Hub is what hubs should be called
+
+[System.Windows.Forms.MessageBox]::Show("I'm cheking for USB hubs. Please make sure that hub is not plugged in!","Equipment Tracker")
+
+
+[System.Windows.Forms.MessageBox]::Show("Plese, plug in a usb hub!","Equipment Tracker")
+
 }
 # Main Script
 $monitorsFound = Get-MonitorsStats
@@ -48,7 +61,6 @@ if (Test-Path $dataBasePath){
 $monitorsToAdd = @();
 $monitorsDataBase = Import-Csv -Path $dataBasePath
 $dataBaseSerials = $monitorsDataBase.ManufactureSerial
-# echo $monitorsDataBase
 
 
 foreach ($monitorFound in $monitorsFound){
@@ -61,3 +73,4 @@ $monitorsToAdd | Export-CSV -Path $dataBasePath -NoTypeInformation -Append
 else{
     $monitorsFound | Export-CSV -Path $dataBasePath -NoTypeInformation
 }
+
